@@ -2,6 +2,12 @@ package config
 
 import (
 	"os"
+	"sync"
+)
+
+var (
+	cfg  *Config
+	once sync.Once
 )
 
 type Config struct {
@@ -12,21 +18,37 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	dbUrl := os.Getenv("DATABASE_URL")
-	jwtSecret := os.Getenv("JWT_SECRET")
-	env := os.Getenv("ENV")
-	if env == "" {
-		env = "developement"
-	}
+	port := getEnv("PORT", "8080")
+	dbUrl := getEnv("DATABASE_URL", "")
+	jwtSecret := getEnv("JWT_SECRET", "")
+	env := getEnv("ENV", "developement")
 
-	return &Config{
-		Port:        port,
-		DatabaseURL: dbUrl,
-		JWTSecret:   jwtSecret,
-		Env:         env,
+	once.Do(func() {
+		cfg = &Config{
+			Port:        port,
+			DatabaseURL: dbUrl,
+			JWTSecret:   jwtSecret,
+			Env:         env,
+		}
+	})
+
+	return cfg
+}
+
+func Get() *Config {
+	return cfg
+}
+
+func Set(key string, value string) *Config {
+	switch key {
 	}
+	return cfg
+}
+
+func getEnv(key, fallback string) string {
+	v := os.Getenv(key)
+	if v == "" {
+		return fallback
+	}
+	return v
 }
