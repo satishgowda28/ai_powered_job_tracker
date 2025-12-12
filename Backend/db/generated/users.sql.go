@@ -18,7 +18,7 @@ RETURNING id, name, email, password_hash, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Name         pgtype.Text
+	Name         string
 	Email        string
 	PasswordHash string
 }
