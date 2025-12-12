@@ -5,20 +5,24 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/auth"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
 )
 
 type AuthService struct {
-	repo *respositories.UserRespository
+	userRepo *respositories.UserRespository
+	rtknRepo *respositories.RefreshTokenRepository
 }
 
-func NewAuthService(repo *respositories.UserRespository) *AuthService {
+func NewAuthService(repo *respositories.UserRespository, rtknRepo *respositories.RefreshTokenRepository) *AuthService {
 	return &AuthService{
-		repo: respositories.NewUserRepository(),
+		userRepo: repo,
+		rtknRepo: rtknRepo,
 	}
 }
 
@@ -31,7 +35,8 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 
 	/* creating a new user */
 	email = strings.ToLower(email)
-	user, err := s.repo.CreateUser(ctx, generated.CreateUserParams{Name: name, Email: email, PasswordHash: hashedPassword})
+
+	user, err := s.userRepo.CreateUser(ctx, generated.CreateUserParams{Name: name, Email: email, PasswordHash: hashedPassword})
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -46,19 +51,29 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (generated.User, error) {
-	user, err := s.repo.GetUserByEmail(ctx, email)
+	user, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return generated.User{}, errors.New("user not found")
 		}
 		return generated.User{}, err
 	}
-	matched, err := auth.ComparePasswordHash(user.PasswordHash, password)
+	matched, err := auth.ComparePasswordHash(password, user.PasswordHash)
 	if err != nil {
 		return generated.User{}, err
 	}
 	if !matched {
 		return generated.User{}, errors.New("email or password is wrong")
 	}
+
 	return user, nil
+}
+func (s *AuthService) NewRefreshToken(ctx context.Context, token string, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
+	expires_at := time.Now().UTC().Add(60 * 24 * time.Hour)
+	return s.rtknRepo.CreateRefreshToken(ctx, generated.CreateRefreshTokenParams{
+		Token:     token,
+		UserID:    user_id,
+		ExpiresAt: pgtype.Timestamp{Time: expires_at},
+	})
+
 }

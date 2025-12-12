@@ -7,7 +7,4 @@ import (
 
 func Register(app *fiber.App) {
 	app.Get("/health", handlers.Health)
-
-	/* Auth */
-	app.Post("/auth/register", handlers.Register)
 }

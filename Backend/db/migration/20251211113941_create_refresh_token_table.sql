@@ -12,5 +12,5 @@ CREATE TABLE user_refresh_token(
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE user_refresh_token;
 -- +goose StatementEnd
