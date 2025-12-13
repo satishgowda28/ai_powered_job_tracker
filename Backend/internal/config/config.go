@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"sync"
 )
@@ -15,6 +16,7 @@ type Config struct {
 	DatabaseURL string
 	JWTSecret   string
 	Env         string
+	Issuer      string
 }
 
 func LoadConfig() *Config {
@@ -22,6 +24,11 @@ func LoadConfig() *Config {
 	dbUrl := getEnv("DATABASE_URL", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
 	env := getEnv("ENV", "developement")
+	issuer := getEnv("ISSUER", "default")
+
+	if issuer == "default" {
+		log.Fatal("ISSUER environment variable must be set")
+	}
 
 	once.Do(func() {
 		cfg = &Config{
@@ -29,6 +36,7 @@ func LoadConfig() *Config {
 			DatabaseURL: dbUrl,
 			JWTSecret:   jwtSecret,
 			Env:         env,
+			Issuer:      issuer,
 		}
 	})
 
