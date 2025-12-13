@@ -2,6 +2,7 @@ package respositories
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/database"
@@ -18,6 +19,7 @@ func NewRefreshTokenRepository() *RefreshTokenRepository {
 }
 
 func (rtkn *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, args generated.CreateRefreshTokenParams) (generated.UserRefreshToken, error) {
+	fmt.Printf("%+v\n", args)
 	return rtkn.q.CreateRefreshToken(ctx, args)
 }
 

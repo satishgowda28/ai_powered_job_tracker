@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -44,6 +45,7 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 				return generated.User{}, errors.New("user alerady present")
 			}
 		}
+		fmt.Print("Error occures here")
 		return generated.User{}, err
 	}
 
@@ -68,12 +70,16 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (genera
 
 	return user, nil
 }
-func (s *AuthService) NewRefreshToken(ctx context.Context, token string, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
+func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
 	expires_at := time.Now().UTC().Add(60 * 24 * time.Hour)
+	token, err := auth.GenerateRefreshToken()
+	if err != nil {
+		return generated.UserRefreshToken{}, err
+	}
 	return s.rtknRepo.CreateRefreshToken(ctx, generated.CreateRefreshTokenParams{
 		Token:     token,
 		UserID:    user_id,
-		ExpiresAt: pgtype.Timestamp{Time: expires_at},
+		ExpiresAt: pgtype.Timestamp{Time: expires_at, Valid: true},
 	})
 
 }
