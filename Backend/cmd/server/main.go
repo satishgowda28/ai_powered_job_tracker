@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/config"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/container"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/database"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/routes"
 )
@@ -24,7 +25,10 @@ func main() {
 
 	database.Connect()
 
+	container := container.NewContainer()
+
 	routes.Register(app)
+	routes.RegisterAuthRoutes(app, container.AuthHandler)
 
 	addr := ":" + cfg.Port
 	log.Println("Starting server on", addr)

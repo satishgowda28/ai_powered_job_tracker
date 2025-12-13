@@ -33,9 +33,18 @@ type JobStatusHistory struct {
 
 type User struct {
 	ID           pgtype.UUID
-	Name         pgtype.Text
+	Name         string
 	Email        string
 	PasswordHash string
 	CreatedAt    pgtype.Timestamp
 	UpdatedAt    pgtype.Timestamp
+}
+
+type UserRefreshToken struct {
+	Token     string
+	UserID    pgtype.UUID
+	ExpiresAt pgtype.Timestamp
+	RevokedAt pgtype.Timestamp
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
 }
