@@ -70,6 +70,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (genera
 
 	return user, nil
 }
+
 func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
 	expires_at := time.Now().UTC().Add(60 * 24 * time.Hour)
 	token, err := auth.GenerateRefreshToken()
