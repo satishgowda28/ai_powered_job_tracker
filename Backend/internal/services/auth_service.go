@@ -20,6 +20,7 @@ type AuthService struct {
 	rtknRepo *respositories.RefreshTokenRepository
 }
 
+// NewAuthService creates an AuthService configured with the provided user and refresh token repositories.
 func NewAuthService(repo *respositories.UserRespository, rtknRepo *respositories.RefreshTokenRepository) *AuthService {
 	return &AuthService{
 		userRepo: repo,
