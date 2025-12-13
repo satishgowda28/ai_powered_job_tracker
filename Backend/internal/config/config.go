@@ -18,6 +18,9 @@ type Config struct {
 	Issuer      string
 }
 
+// LoadConfig builds the package singleton Config from environment variables.
+// It reads PORT (default "8080"), DATABASE_URL, JWT_SECRET, ENV (default "developement"), and ISSUER,
+// initializes the singleton exactly once, and returns that Config instance.
 func LoadConfig() *Config {
 	port := getEnv("PORT", "8080")
 	dbUrl := getEnv("DATABASE_URL", "")

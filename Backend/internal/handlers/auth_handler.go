@@ -36,6 +36,8 @@ type AuthResponse struct {
 	RefreshToken string   `json:"refreshtoken"`
 }
 
+// NewAuthHandler creates a new AuthHandler configured with the provided AuthService.
+// The returned AuthHandler uses the service to handle authentication-related HTTP requests.
 func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,

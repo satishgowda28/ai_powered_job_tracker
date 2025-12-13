@@ -18,6 +18,7 @@ type Container struct {
 	AuthHandler *handlers.AuthHandler
 }
 
+//  - AuthHandler constructed with the AuthService
 func NewContainer() *Container {
 	c := &Container{}
 	/* Respository */

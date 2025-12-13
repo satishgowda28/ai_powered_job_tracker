@@ -11,6 +11,7 @@ type RefreshTokenRepository struct {
 	q *generated.Queries
 }
 
+// NewRefreshTokenRepository returns a new RefreshTokenRepository configured to use the package database.DB for executing generated queries.
 func NewRefreshTokenRepository() *RefreshTokenRepository {
 	return &RefreshTokenRepository{
 		q: generated.New(database.DB),

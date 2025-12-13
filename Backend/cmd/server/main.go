@@ -11,6 +11,7 @@ import (
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/routes"
 )
 
+// and starts the Fiber HTTP server on the configured port, logging startup and fatal errors.
 func main() {
 
 	if err := godotenv.Load(); err != nil {
