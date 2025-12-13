@@ -8,7 +8,7 @@ import (
 
 type Container struct {
 	/* Respository */
-	UserRespository         *respositories.UserRespository
+	UserRepository          *respositories.UserRepository
 	RefreshTokenRespository *respositories.RefreshTokenRepository
 
 	/* Service */
@@ -21,11 +21,11 @@ type Container struct {
 func NewContainer() *Container {
 	c := &Container{}
 	/* Respository */
-	c.UserRespository = respositories.NewUserRepository()
+	c.UserRepository = respositories.NewUserRepository()
 	c.RefreshTokenRespository = respositories.NewRefreshTokenRepository()
 
 	/* Services */
-	c.AuthService = services.NewAuthService(c.UserRespository, c.RefreshTokenRespository)
+	c.AuthService = services.NewAuthService(c.UserRepository, c.RefreshTokenRespository)
 
 	/* Handlers */
 	c.AuthHandler = handlers.NewAuthHandler(c.AuthService)

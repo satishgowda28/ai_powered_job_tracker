@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"errors"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/auth"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
@@ -45,33 +43,48 @@ func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
 	newCreds := new(RegisterParam)
 	if err := c.BodyParser(newCreds); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "invalid JSON body",
+		})
 	}
 	/* Errors */
 	if newCreds.Name == "" {
-		return errors.New("user name is required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "user name is required",
+		})
 	}
-	if newCreds.Email == "" {
-		return errors.New("user email is required")
-	}
-	if newCreds.Password == "" {
-		return errors.New("user password is required")
+	if newCreds.Email == "" || newCreds.Password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "Email and Password is required",
+		})
 	}
 
 	/* register user */
 	user, err := authHandler.authService.Register(c.Context(), newCreds.Name, newCreds.Email, newCreds.Password)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 	/* generate refreshtoke */
 	rfToken, err := authHandler.authService.NewRefreshToken(c.Context(), user.ID)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 	/* Access token */
-	token, err := auth.GenerateAccessToken(user.ID.Bytes)
+	token, err := auth.GenerateAccessToken(user.ID)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 
 	return c.JSON(AuthResponse{
@@ -87,29 +100,47 @@ func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
 func (authHandler *AuthHandler) Login(c *fiber.Ctx) error {
 	loginCreds := new(LoginParam)
 	if err := c.BodyParser(loginCreds); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "invalid JSON body",
+		})
 	}
 	/* errors */
 	if loginCreds.Email == "" {
-		return errors.New("user email is required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "User Email is required",
+		})
 	}
 	if loginCreds.Password == "" {
-		return errors.New("user password is required")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "Password is required",
+		})
 	}
 	/* check user */
 	user, err := authHandler.authService.Login(c.Context(), loginCreds.Email, loginCreds.Password)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 	/* generate refreshtoken */
 	rfToken, err := authHandler.authService.NewRefreshToken(c.Context(), user.ID)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 	/* Access token */
-	token, err := auth.GenerateAccessToken(user.ID.Bytes)
+	token, err := auth.GenerateAccessToken(user.ID)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
 	}
 
 	return c.JSON(AuthResponse{User: UserData{

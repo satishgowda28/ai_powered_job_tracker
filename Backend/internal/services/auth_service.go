@@ -2,12 +2,11 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
@@ -16,11 +15,11 @@ import (
 )
 
 type AuthService struct {
-	userRepo *respositories.UserRespository
+	userRepo *respositories.UserRepository
 	rtknRepo *respositories.RefreshTokenRepository
 }
 
-func NewAuthService(repo *respositories.UserRespository, rtknRepo *respositories.RefreshTokenRepository) *AuthService {
+func NewAuthService(repo *respositories.UserRepository, rtknRepo *respositories.RefreshTokenRepository) *AuthService {
 	return &AuthService{
 		userRepo: repo,
 		rtknRepo: rtknRepo,
@@ -29,7 +28,7 @@ func NewAuthService(repo *respositories.UserRespository, rtknRepo *respositories
 
 func (s *AuthService) Register(ctx context.Context, name, email, password string) (generated.User, error) {
 	/* Hashing passowrd */
-	hashedPassword, err := auth.Hashpassword(password)
+	hashedPassword, err := auth.HashPassword(password)
 	if err != nil {
 		return generated.User{}, err
 	}
@@ -42,10 +41,9 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23505" {
-				return generated.User{}, errors.New("user alerady present")
+				return generated.User{}, errors.New("user already present")
 			}
 		}
-		fmt.Print("Error occures here")
 		return generated.User{}, err
 	}
 
@@ -53,10 +51,12 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (generated.User, error) {
+	email = strings.ToLower(email)
+	email = strings.TrimSpace(email)
 	user, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return generated.User{}, errors.New("user not found")
+		if errors.Is(err, pgx.ErrNoRows) {
+			return generated.User{}, errors.New("invalid email or password")
 		}
 		return generated.User{}, err
 	}
@@ -65,14 +65,14 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (genera
 		return generated.User{}, err
 	}
 	if !matched {
-		return generated.User{}, errors.New("email or password is wrong")
+		return generated.User{}, errors.New("invalid email or password")
 	}
 
 	return user, nil
 }
 
 func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
-	expires_at := time.Now().UTC().Add(60 * 24 * time.Hour)
+	expiresAt := time.Now().UTC().Add(60 * 24 * time.Hour)
 	token, err := auth.GenerateRefreshToken()
 	if err != nil {
 		return generated.UserRefreshToken{}, err
@@ -80,7 +80,7 @@ func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) 
 	return s.rtknRepo.CreateRefreshToken(ctx, generated.CreateRefreshTokenParams{
 		Token:     token,
 		UserID:    user_id,
-		ExpiresAt: pgtype.Timestamp{Time: expires_at, Valid: true},
+		ExpiresAt: pgtype.Timestamp{Time: expiresAt, Valid: true},
 	})
 
 }

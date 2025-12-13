@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"sync"
 )
@@ -23,7 +24,11 @@ func LoadConfig() *Config {
 	dbUrl := getEnv("DATABASE_URL", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
 	env := getEnv("ENV", "developement")
-	issuer := getEnv("ISSUER", "")
+	issuer := getEnv("ISSUER", "default")
+
+	if issuer == "default" {
+		log.Fatal("ISSUER environment variable must be set")
+	}
 
 	once.Do(func() {
 		cfg = &Config{

@@ -2,7 +2,7 @@ package auth
 
 import "github.com/alexedwards/argon2id"
 
-func Hashpassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	return argon2id.CreateHash(password, argon2id.DefaultParams)
 }
 

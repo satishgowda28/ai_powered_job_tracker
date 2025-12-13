@@ -7,6 +7,6 @@ ALTER COLUMN name SET NOT NULL;
 -- +goose Down
 -- +goose StatementBegin
 ALTER TABLE users
-ALTER COLUMN name DROP NOT NULL
+ALTER COLUMN name DROP NOT NULL;
 ;
 -- +goose StatementEnd

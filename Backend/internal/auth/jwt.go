@@ -8,10 +8,11 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/config"
 )
 
-func GenerateAccessToken(userID uuid.UUID) (string, error) {
+func GenerateAccessToken(userID pgtype.UUID) (string, error) {
 	currentTime := time.Now().UTC()
 	cfg := config.Get()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
@@ -32,13 +33,14 @@ func ValidateToken(token string) (uuid.UUID, error) {
 	cfg := config.Get()
 	jwtToken, err := jwt.ParseWithClaims(token, claim, func(t *jwt.Token) (any, error) {
 		return []byte(cfg.JWTSecret), nil
-	})
+	}, jwt.WithIssuer(cfg.Issuer))
 	if err != nil {
 		return uuid.Nil, err
 	}
 	if !jwtToken.Valid {
 		return uuid.Nil, errors.New("not authorized")
 	}
+
 	userId, err := uuid.Parse(claim.Subject)
 	if err != nil {
 		return uuid.Nil, err
@@ -50,7 +52,7 @@ func GenerateRefreshToken() (string, error) {
 	key := make([]byte, 32)
 	_, err := rand.Read(key)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	refreshToken := hex.EncodeToString([]byte(key))
 	return refreshToken, nil
