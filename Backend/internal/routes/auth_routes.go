@@ -8,6 +8,7 @@ import (
 func RegisterAuthRoutes(app *fiber.App, h *handlers.AuthHandler) {
 	app.Post("/auth/register", h.Register)
 	app.Post("/auth/login", h.Login)
+	app.Post("/auth/refresh", h.Refresh)
 	/* auth := app.Group("/auth")
 	limiter := limiter.New(limiter.Config{
 		Max:        5,

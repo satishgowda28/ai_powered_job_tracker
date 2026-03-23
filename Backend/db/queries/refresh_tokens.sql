@@ -14,3 +14,7 @@ JOIN user_refresh_token ON users.id = user_refresh_token.user_id
 WHERE user_refresh_token.token = $1
 AND revoked_at IS NULL
 AND expires_at > NOW();
+
+-- name: GetRefreshToken :one
+SELECT * FROM user_refresh_token
+WHERE token = $1;
