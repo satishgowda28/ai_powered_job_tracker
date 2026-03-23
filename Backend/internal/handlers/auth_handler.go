@@ -6,21 +6,21 @@ import (
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
 )
 
-type AuthHandler struct {
-	authService *services.AuthService
-}
-
 type BaseAuthParam struct {
 	Email    string `json:"email" form:"email"`
 	Password string `json:"password" form:"password"`
 }
-type RegisterParam struct {
-	BaseAuthParam
-	Name string `json:"name" form:"name"`
+type AuthHandler struct {
+	authService *services.AuthService
 }
-type LoginParam struct {
-	BaseAuthParam
-}
+
+// type RegisterParam struct {
+// 	BaseAuthParam
+// 	Name string `json:"name" form:"name"`
+// }
+// type LoginParam struct {
+// 	BaseAuthParam
+// }
 
 /* Keep adding aditional info for use if required */
 type UserData struct {
@@ -41,8 +41,11 @@ func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 }
 
 func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
-	newCreds := new(RegisterParam)
-	if err := c.BodyParser(newCreds); err != nil {
+	var newCreds struct {
+		BaseAuthParam
+		Name string `json:"name" form:"name"`
+	}
+	if err := c.BodyParser(&newCreds); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "bad_request",
 			"message": "invalid JSON body",
@@ -98,8 +101,10 @@ func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
 }
 
 func (authHandler *AuthHandler) Login(c *fiber.Ctx) error {
-	loginCreds := new(LoginParam)
-	if err := c.BodyParser(loginCreds); err != nil {
+	var loginCreds struct {
+		BaseAuthParam
+	}
+	if err := c.BodyParser(&loginCreds); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "bad_request",
 			"message": "invalid JSON body",
@@ -149,4 +154,32 @@ func (authHandler *AuthHandler) Login(c *fiber.Ctx) error {
 	},
 		RefreshToken: rfToken.Token,
 		AccessToken:  token})
+}
+
+func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
+	var rfTknBody struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	if err := c.BodyParser(&rfTknBody); err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "invalid request body",
+		})
+	}
+	if rfTknBody.RefreshToken == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": "refresh token required",
+		})
+	}
+	accessToken, err := h.authService.Refresh(c.Context(), rfTknBody.RefreshToken)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad_request",
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{"access_token": accessToken})
+
 }

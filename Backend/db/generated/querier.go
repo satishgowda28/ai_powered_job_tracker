@@ -17,6 +17,7 @@ type Querier interface {
 	GetHistoryForJob(ctx context.Context, jobID pgtype.UUID) ([]JobStatusHistory, error)
 	GetJobByID(ctx context.Context, arg GetJobByIDParams) (Job, error)
 	GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error)
+	GetRefreshToken(ctx context.Context, token string) (UserRefreshToken, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 	GetUserFromRefreshToken(ctx context.Context, token string) (User, error)

@@ -84,3 +84,24 @@ func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) 
 	})
 
 }
+
+func (authSer *AuthService) Refresh(ctx context.Context, token string) (string, error) {
+	dbToken, err := authSer.rtknRepo.Get(ctx, token)
+	if err != nil {
+		return "", errors.New("invald refresh token")
+	}
+
+	if dbToken.RevokedAt.Valid {
+		return "", errors.New("Refresh token revoked")
+	}
+
+	if time.Now().After(dbToken.ExpiresAt.Time) {
+		return "", errors.New("refresh token expired")
+	}
+	accessToken, err := auth.GenerateAccessToken(dbToken.UserID)
+	if err != nil {
+		return "", err
+	}
+
+	return accessToken, nil
+}

@@ -28,3 +28,7 @@ func (rtkn *RefreshTokenRepository) RevokeRefreshToken(ctx context.Context, toke
 func (rtkn *RefreshTokenRepository) GetUserFromRefreshToken(ctx context.Context, token string) (generated.User, error) {
 	return rtkn.q.GetUserFromRefreshToken(ctx, token)
 }
+
+func (rtkn *RefreshTokenRepository) Get(ctx context.Context, token string) (generated.UserRefreshToken, error) {
+	return rtkn.q.GetRefreshToken(ctx, token)
+}

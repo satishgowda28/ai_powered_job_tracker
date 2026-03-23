@@ -13,9 +13,11 @@ type Container struct {
 
 	/* Service */
 	AuthService *services.AuthService
+	UserService *services.UserService
 
 	/* Handlers */
 	AuthHandler *handlers.AuthHandler
+	UserHandler *handlers.UserHandler
 }
 
 func NewContainer() *Container {
@@ -26,9 +28,11 @@ func NewContainer() *Container {
 
 	/* Services */
 	c.AuthService = services.NewAuthService(c.UserRepository, c.RefreshTokenRespository)
+	c.UserService = services.NewUserService(c.UserRepository)
 
 	/* Handlers */
 	c.AuthHandler = handlers.NewAuthHandler(c.AuthService)
+	c.UserHandler = handlers.NewUserHandler(c.UserService)
 
 	return c
 }
