@@ -29,7 +29,7 @@ func JWTMiddleware() fiber.Handler {
 		if err != nil {
 			return unauthorized(c, "invald or expired token")
 		}
-		c.Locals("userID", userId.String())
+		c.Locals("userID", userId)
 		return c.Next()
 	}
 }

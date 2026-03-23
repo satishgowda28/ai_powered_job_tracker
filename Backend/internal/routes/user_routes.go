@@ -6,8 +6,8 @@ import (
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/middleware"
 )
 
-func RegisterUserRoutes(app *fiber.App) {
-	app.Get("/me", middleware.JWTMiddleware(), handlers.Me)
+func RegisterUserRoutes(app *fiber.App, h *handlers.UserHandler) {
+	app.Get("/me", middleware.JWTMiddleware(), h.Me)
 	/* auth := app.Group("/auth")
 	limiter := limiter.New(limiter.Config{
 		Max:        5,
