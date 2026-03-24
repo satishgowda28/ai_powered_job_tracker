@@ -32,3 +32,7 @@ func (jbRepo *JobRespository) GetJobById(ctx context.Context, arg generated.GetJ
 func (jbRepo *JobRespository) UpdateJobStatus(ctx context.Context, arg generated.UpdateJobStatusParams) (generated.Job, error) {
 	return jbRepo.q.UpdateJobStatus(ctx, arg)
 }
+
+func (jbRepo *JobRespository) InsertStatusHistory(ctx context.Context, arg generated.InsertJobStatusHistoryParams) error {
+	return jbRepo.q.InsertJobStatusHistory(ctx, arg)
+}

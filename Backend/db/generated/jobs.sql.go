@@ -21,12 +21,12 @@ type CreateJobParams struct {
 	UserID         pgtype.UUID
 	Company        string
 	Title          string
-	JobDescription pgtype.Text
-	JobLocation    pgtype.Text
+	JobDescription string
+	JobLocation    string
 	Salary         pgtype.Int4
-	JobUrl         pgtype.Text
+	JobUrl         string
 	Status         string
-	Notes          pgtype.Text
+	Notes          string
 }
 
 func (q *Queries) CreateJob(ctx context.Context, arg CreateJobParams) (Job, error) {
@@ -137,17 +137,18 @@ func (q *Queries) GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error)
 
 const updateJobStatus = `-- name: UpdateJobStatus :one
 UPDATE jobs SET Status = $2, update_at = NOW()
-WHERE id = $1
+WHERE id = $1 AND user_id = $3
 RETURNING id, user_id, company, title, job_description, job_location, salary, job_url, status, notes, applied_at, updated_at
 `
 
 type UpdateJobStatusParams struct {
 	ID     pgtype.UUID
 	Status string
+	UserID pgtype.UUID
 }
 
 func (q *Queries) UpdateJobStatus(ctx context.Context, arg UpdateJobStatusParams) (Job, error) {
-	row := q.db.QueryRow(ctx, updateJobStatus, arg.ID, arg.Status)
+	row := q.db.QueryRow(ctx, updateJobStatus, arg.ID, arg.Status, arg.UserID)
 	var i Job
 	err := row.Scan(
 		&i.ID,

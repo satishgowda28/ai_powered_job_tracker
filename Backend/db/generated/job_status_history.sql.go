@@ -50,8 +50,8 @@ VALUES ($1, $2, $3)
 
 type InsertJobStatusHistoryParams struct {
 	JobID     pgtype.UUID
-	OldStatus pgtype.Text
-	NewStatus pgtype.Text
+	OldStatus string
+	NewStatus string
 }
 
 func (q *Queries) InsertJobStatusHistory(ctx context.Context, arg InsertJobStatusHistoryParams) error {

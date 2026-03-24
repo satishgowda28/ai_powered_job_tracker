@@ -13,12 +13,12 @@ type Job struct {
 	UserID         pgtype.UUID
 	Company        string
 	Title          string
-	JobDescription pgtype.Text
-	JobLocation    pgtype.Text
+	JobDescription string
+	JobLocation    string
 	Salary         pgtype.Int4
-	JobUrl         pgtype.Text
+	JobUrl         string
 	Status         string
-	Notes          pgtype.Text
+	Notes          string
 	AppliedAt      pgtype.Timestamp
 	UpdatedAt      pgtype.Timestamp
 }
@@ -26,8 +26,8 @@ type Job struct {
 type JobStatusHistory struct {
 	ID        pgtype.UUID
 	JobID     pgtype.UUID
-	OldStatus pgtype.Text
-	NewStatus pgtype.Text
+	OldStatus string
+	NewStatus string
 	ChangedAt pgtype.Timestamp
 }
 

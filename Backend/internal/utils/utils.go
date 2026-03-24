@@ -11,3 +11,5 @@ func ToPgtypeUUID(id uuid.UUID) pgtype.UUID {
 		Valid: true,
 	}
 }
+
+func ToPgTypeText() {}

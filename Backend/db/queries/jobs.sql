@@ -15,5 +15,5 @@ WHERE id = $1 AND user_id = $2;
 
 -- name: UpdateJobStatus :one
 UPDATE jobs SET Status = $2, update_at = NOW()
-WHERE id = $1
+WHERE id = $1 AND user_id = $3
 RETURNING *;
