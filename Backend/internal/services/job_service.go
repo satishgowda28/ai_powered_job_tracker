@@ -57,3 +57,11 @@ func (jobSrv *JobService) UpdateJobStatus(ctx context.Context, arg generated.Upd
 
 	return newData, nil
 }
+
+func (jobSrv *JobService) GetJobApplicationStatuses(ctx context.Context) ([]generated.JobApplicationStatuse, error) {
+	statuses, err := jobSrv.jobRepo.GetJobApplicationStatuses(ctx)
+	if err != nil {
+		return []generated.JobApplicationStatuse{}, errors.New("failed to get statuses")
+	}
+	return statuses, nil
+}

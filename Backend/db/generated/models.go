@@ -23,6 +23,13 @@ type Job struct {
 	UpdatedAt      pgtype.Timestamp
 }
 
+type JobApplicationStatuse struct {
+	Slug        string
+	DisplayName string
+	ColorHex    string
+	Description string
+}
+
 type JobStatusHistory struct {
 	ID        pgtype.UUID
 	JobID     pgtype.UUID

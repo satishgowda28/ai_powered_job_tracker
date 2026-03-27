@@ -43,6 +43,35 @@ func (q *Queries) GetHistoryForJob(ctx context.Context, jobID pgtype.UUID) ([]Jo
 	return items, nil
 }
 
+const getJobApplicationStatuses = `-- name: GetJobApplicationStatuses :many
+SELECT slug, display_name, color_hex, description FROM job_application_statuse
+`
+
+func (q *Queries) GetJobApplicationStatuses(ctx context.Context) ([]JobApplicationStatuse, error) {
+	rows, err := q.db.Query(ctx, getJobApplicationStatuses)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []JobApplicationStatuse
+	for rows.Next() {
+		var i JobApplicationStatuse
+		if err := rows.Scan(
+			&i.Slug,
+			&i.DisplayName,
+			&i.ColorHex,
+			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const insertJobStatusHistory = `-- name: InsertJobStatusHistory :exec
 INSERT INTO job_status_history (job_id, old_status, new_status)
 VALUES ($1, $2, $3)

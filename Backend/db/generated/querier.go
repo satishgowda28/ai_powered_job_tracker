@@ -15,6 +15,7 @@ type Querier interface {
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (UserRefreshToken, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetHistoryForJob(ctx context.Context, jobID pgtype.UUID) ([]JobStatusHistory, error)
+	GetJobApplicationStatuses(ctx context.Context) ([]JobApplicationStatuse, error)
 	GetJobByID(ctx context.Context, arg GetJobByIDParams) (Job, error)
 	GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error)
 	GetRefreshToken(ctx context.Context, token string) (UserRefreshToken, error)

@@ -6,3 +6,6 @@ VALUES ($1, $2, $3);
 SELECT * FROM job_status_history
 WHERE job_id = $1
 ORDER BY changed_at DESC;
+
+-- name: GetJobApplicationStatuses :many
+SELECT * FROM job_application_statuse;
