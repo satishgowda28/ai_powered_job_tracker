@@ -41,7 +41,10 @@ func (h *JobHandler) CreateJob(c *fiber.Ctx) error {
 		Notes          string `json:"notes"`
 	}
 	if err := c.BodyParser(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad-request", "message": "invalid request body"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   "bad-request",
+			"message": "invalid request body",
+		})
 	}
 	newJob, err := h.jobService.CreateJob(c.Context(), generated.CreateJobParams{
 		UserID:         utils.ToPgtypeUUID(userId),
@@ -96,8 +99,7 @@ func (h *JobHandler) GetJob(c *fiber.Ctx) error {
 	jobIdStr := c.Params("id")
 	jobId, err := uuid.Parse(jobIdStr)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   "server_error",
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "server_error",
 			"message": "user id missing from context",
 		})
 	}
@@ -112,4 +114,48 @@ func (h *JobHandler) GetJob(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": jobs})
+}
+
+func (h *JobHandler) UpdateJobStatus(c *fiber.Ctx) error {
+	userId, err := utils.GetUserId(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "server_error",
+			"message": "user id missing from context",
+		})
+	}
+	jobIDStr := c.Params("id")
+	jobId, err := uuid.Parse(jobIDStr)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "server_error",
+			"message": "job id issue",
+		})
+	}
+	var body struct {
+		Status string `json:"status"`
+	}
+	if err := c.BodyParser(body); err != nil {
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "bad-request",
+			"message": "invalid request body",
+		})
+	}
+	job, err := h.jobService.UpdateJobStatus(c.Context(),
+		generated.UpdateJobStatusParams{
+			ID:     utils.ToPgtypeUUID(jobId),
+			Status: body.Status,
+			UserID: utils.ToPgtypeUUID(userId),
+		},
+	)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   "job-update-fail",
+			"message": "upadating status failed",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": job,
+	})
 }
