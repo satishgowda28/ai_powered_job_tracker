@@ -10,14 +10,17 @@ type Container struct {
 	/* Respository */
 	UserRepository          *respositories.UserRepository
 	RefreshTokenRespository *respositories.RefreshTokenRepository
+	JobRepository           *respositories.JobRespository
 
 	/* Service */
 	AuthService *services.AuthService
 	UserService *services.UserService
+	JobService  *services.JobService
 
 	/* Handlers */
 	AuthHandler *handlers.AuthHandler
 	UserHandler *handlers.UserHandler
+	JobHandler  *handlers.JobHandler
 }
 
 func NewContainer() *Container {
@@ -25,14 +28,17 @@ func NewContainer() *Container {
 	/* Respository */
 	c.UserRepository = respositories.NewUserRepository()
 	c.RefreshTokenRespository = respositories.NewRefreshTokenRepository()
+	c.JobRepository = respositories.NewJobrepository()
 
 	/* Services */
 	c.AuthService = services.NewAuthService(c.UserRepository, c.RefreshTokenRespository)
 	c.UserService = services.NewUserService(c.UserRepository)
+	c.JobService = services.NewJobSerive(c.JobRepository)
 
 	/* Handlers */
 	c.AuthHandler = handlers.NewAuthHandler(c.AuthService)
 	c.UserHandler = handlers.NewUserHandler(c.UserService)
+	c.JobHandler = handlers.NewJobHandler(c.JobService)
 
 	return c
 }
