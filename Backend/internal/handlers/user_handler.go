@@ -30,5 +30,10 @@ func (usrHandler *UserHandler) Me(c *fiber.Ctx) error {
 			"message": "user not found"})
 	}
 
-	return c.JSON(fiber.Map{"Status": "OK", "data": fiber.Map{"name": user.Name, "email": user.Email, "userId": user.ID}})
+	return c.JSON(
+		fiber.Map{
+			"Status": "OK",
+			"data":   fiber.Map{"name": user.Name, "email": user.Email, "userId": user.ID},
+		},
+	)
 }

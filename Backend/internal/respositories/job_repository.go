@@ -17,26 +17,43 @@ func NewJobrepository() *JobRespository {
 	}
 }
 
-func (jbRepo *JobRespository) CreateJob(ctx context.Context, arg generated.CreateJobParams) (generated.Job, error) {
+func (jbRepo *JobRespository) CreateJob(
+	ctx context.Context,
+	arg generated.CreateJobParams,
+) (generated.Job, error) {
 	return jbRepo.q.CreateJob(ctx, arg)
 }
 
-func (jbRepo *JobRespository) GetJobsByUser(ctx context.Context, arg generated.GetJobsParams) ([]generated.Job, error) {
+func (jbRepo *JobRespository) GetJobsByUser(
+	ctx context.Context,
+	arg generated.GetJobsParams,
+) ([]generated.Job, error) {
 	return jbRepo.q.GetJobs(ctx, arg)
 }
 
-func (jbRepo *JobRespository) GetJobById(ctx context.Context, arg generated.GetJobByIDParams) (generated.Job, error) {
+func (jbRepo *JobRespository) GetJobById(
+	ctx context.Context,
+	arg generated.GetJobByIDParams,
+) (generated.Job, error) {
 	return jbRepo.q.GetJobByID(ctx, arg)
 }
 
-func (jbRepo *JobRespository) UpdateJobStatus(ctx context.Context, arg generated.UpdateJobStatusParams) (generated.Job, error) {
+func (jbRepo *JobRespository) UpdateJobStatus(
+	ctx context.Context,
+	arg generated.UpdateJobStatusParams,
+) (generated.Job, error) {
 	return jbRepo.q.UpdateJobStatus(ctx, arg)
 }
 
-func (jbRepo *JobRespository) InsertStatusHistory(ctx context.Context, arg generated.InsertJobStatusHistoryParams) error {
+func (jbRepo *JobRespository) InsertStatusHistory(
+	ctx context.Context,
+	arg generated.InsertJobStatusHistoryParams,
+) error {
 	return jbRepo.q.InsertJobStatusHistory(ctx, arg)
 }
 
-func (jbRepo *JobRespository) GetJobApplicationStatuses(ctx context.Context) ([]generated.JobApplicationStatuse, error) {
+func (jbRepo *JobRespository) GetJobApplicationStatuses(
+	ctx context.Context,
+) ([]generated.JobApplicationStatuse, error) {
 	return jbRepo.q.GetJobApplicationStatuses(ctx)
 }

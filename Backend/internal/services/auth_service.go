@@ -19,14 +19,20 @@ type AuthService struct {
 	rtknRepo *respositories.RefreshTokenRepository
 }
 
-func NewAuthService(repo *respositories.UserRepository, rtknRepo *respositories.RefreshTokenRepository) *AuthService {
+func NewAuthService(
+	repo *respositories.UserRepository,
+	rtknRepo *respositories.RefreshTokenRepository,
+) *AuthService {
 	return &AuthService{
 		userRepo: repo,
 		rtknRepo: rtknRepo,
 	}
 }
 
-func (s *AuthService) Register(ctx context.Context, name, email, password string) (generated.User, error) {
+func (s *AuthService) Register(
+	ctx context.Context,
+	name, email, password string,
+) (generated.User, error) {
 	/* Hashing passowrd */
 	hashedPassword, err := auth.HashPassword(password)
 	if err != nil {
@@ -36,7 +42,10 @@ func (s *AuthService) Register(ctx context.Context, name, email, password string
 	/* creating a new user */
 	email = strings.ToLower(email)
 
-	user, err := s.userRepo.CreateUser(ctx, generated.CreateUserParams{Name: name, Email: email, PasswordHash: hashedPassword})
+	user, err := s.userRepo.CreateUser(
+		ctx,
+		generated.CreateUserParams{Name: name, Email: email, PasswordHash: hashedPassword},
+	)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -71,7 +80,10 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (genera
 	return user, nil
 }
 
-func (s *AuthService) NewRefreshToken(ctx context.Context, user_id pgtype.UUID) (generated.UserRefreshToken, error) {
+func (s *AuthService) NewRefreshToken(
+	ctx context.Context,
+	user_id pgtype.UUID,
+) (generated.UserRefreshToken, error) {
 	expiresAt := time.Now().UTC().Add(60 * 24 * time.Hour)
 	token, err := auth.GenerateRefreshToken()
 	if err != nil {

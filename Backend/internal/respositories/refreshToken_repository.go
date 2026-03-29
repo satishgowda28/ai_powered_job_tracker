@@ -17,18 +17,30 @@ func NewRefreshTokenRepository() *RefreshTokenRepository {
 	}
 }
 
-func (rtkn *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, args generated.CreateRefreshTokenParams) (generated.UserRefreshToken, error) {
+func (rtkn *RefreshTokenRepository) CreateRefreshToken(
+	ctx context.Context,
+	args generated.CreateRefreshTokenParams,
+) (generated.UserRefreshToken, error) {
 	return rtkn.q.CreateRefreshToken(ctx, args)
 }
 
-func (rtkn *RefreshTokenRepository) RevokeRefreshToken(ctx context.Context, token string) (generated.UserRefreshToken, error) {
+func (rtkn *RefreshTokenRepository) RevokeRefreshToken(
+	ctx context.Context,
+	token string,
+) (generated.UserRefreshToken, error) {
 	return rtkn.q.RevokeRefreshToken(ctx, token)
 }
 
-func (rtkn *RefreshTokenRepository) GetUserFromRefreshToken(ctx context.Context, token string) (generated.User, error) {
+func (rtkn *RefreshTokenRepository) GetUserFromRefreshToken(
+	ctx context.Context,
+	token string,
+) (generated.User, error) {
 	return rtkn.q.GetUserFromRefreshToken(ctx, token)
 }
 
-func (rtkn *RefreshTokenRepository) Get(ctx context.Context, token string) (generated.UserRefreshToken, error) {
+func (rtkn *RefreshTokenRepository) Get(
+	ctx context.Context,
+	token string,
+) (generated.UserRefreshToken, error) {
 	return rtkn.q.GetRefreshToken(ctx, token)
 }

@@ -75,7 +75,10 @@ func (h *JobHandler) GetJobs(c *fiber.Ctx) error {
 			"message": "user id missing from context",
 		})
 	}
-	jobs, err := h.jobService.GetJobs(c.Context(), generated.GetJobsParams{UserID: utils.ToPgtypeUUID(userId)})
+	jobs, err := h.jobService.GetJobs(
+		c.Context(),
+		generated.GetJobsParams{UserID: utils.ToPgtypeUUID(userId)},
+	)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -103,7 +106,13 @@ func (h *JobHandler) GetJob(c *fiber.Ctx) error {
 			"message": "user id missing from context",
 		})
 	}
-	jobs, err := h.jobService.GetJob(c.Context(), generated.GetJobByIDParams{UserID: utils.ToPgtypeUUID(userId), ID: utils.ToPgtypeUUID(jobId)})
+	jobs, err := h.jobService.GetJob(
+		c.Context(),
+		generated.GetJobByIDParams{
+			UserID: utils.ToPgtypeUUID(userId),
+			ID:     utils.ToPgtypeUUID(jobId),
+		},
+	)
 
 	if err != nil {
 		fmt.Println(err.Error())

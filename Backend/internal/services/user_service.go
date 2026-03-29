@@ -20,7 +20,10 @@ func NewUserService(userResp *respositories.UserRepository) *UserService {
 	}
 }
 
-func (usrService *UserService) GetUserDetails(ctx context.Context, userId pgtype.UUID) (generated.User, error) {
+func (usrService *UserService) GetUserDetails(
+	ctx context.Context,
+	userId pgtype.UUID,
+) (generated.User, error) {
 	user, err := usrService.userRepo.GetUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

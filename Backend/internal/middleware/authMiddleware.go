@@ -34,5 +34,6 @@ func JWTMiddleware() fiber.Handler {
 	}
 }
 func unauthorized(c *fiber.Ctx, msg string) error {
-	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthorized", "message": msg})
+	return c.Status(fiber.StatusUnauthorized).
+		JSON(fiber.Map{"error": "unauthorized", "message": msg})
 }

@@ -18,7 +18,10 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (r *UserRepository) CreateUser(ctx context.Context, args generated.CreateUserParams) (generated.User, error) {
+func (r *UserRepository) CreateUser(
+	ctx context.Context,
+	args generated.CreateUserParams,
+) (generated.User, error) {
 	return r.q.CreateUser(ctx, args)
 }
 
@@ -26,6 +29,9 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (gene
 	return r.q.GetUserByEmail(ctx, email)
 }
 
-func (usrRepo *UserRepository) GetUser(ctx context.Context, userdId pgtype.UUID) (generated.User, error) {
+func (usrRepo *UserRepository) GetUser(
+	ctx context.Context,
+	userdId pgtype.UUID,
+) (generated.User, error) {
 	return usrRepo.q.GetUserByID(ctx, userdId)
 }

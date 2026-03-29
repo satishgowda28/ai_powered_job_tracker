@@ -7,7 +7,7 @@ import (
 )
 
 type BaseAuthParam struct {
-	Email    string `json:"email" form:"email"`
+	Email    string `json:"email"    form:"email"`
 	Password string `json:"password" form:"password"`
 }
 type AuthHandler struct {
@@ -66,7 +66,12 @@ func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
 	}
 
 	/* register user */
-	user, err := authHandler.authService.Register(c.Context(), newCreds.Name, newCreds.Email, newCreds.Password)
+	user, err := authHandler.authService.Register(
+		c.Context(),
+		newCreds.Name,
+		newCreds.Email,
+		newCreds.Password,
+	)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "bad_request",
