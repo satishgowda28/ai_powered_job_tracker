@@ -28,6 +28,7 @@ func (h *JobHandler) RegisterRoutes(router fiber.Router) {
 	jobRouter.Get("/", h.GetJobs)
 	jobRouter.Get("/:id", h.GetJob)
 	jobRouter.Put("/:id", h.UpdateJobStatus)
+	jobRouter.Get("/:id/history", h.GetJobStatusHistory)
 }
 
 func (h *JobHandler) CreateJob(c *fiber.Ctx) error {
@@ -175,5 +176,29 @@ func (h *JobHandler) UpdateJobStatus(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": job,
+	})
+}
+
+func (h *JobHandler) GetJobStatusHistory(c *fiber.Ctx) error {
+	userId, err := utils.GetUserId(c)
+	if err != nil {
+		return utils.NotFound(c, err.Error())
+	}
+	jobIdStr := c.Params("id")
+	jobId, err := uuid.Parse(jobIdStr)
+	if err != nil {
+		return utils.BadRequest(c, "Invalid ID format")
+	}
+
+	statusHistory, err := h.jobService.GetJobStatusHistory(
+		c.Context(),
+		utils.ToPgtypeUUID(userId),
+		utils.ToPgtypeUUID(jobId),
+	)
+	if err != nil {
+		return utils.ServerError(c, "Failed to retrieve history")
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": statusHistory,
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
 )
@@ -88,4 +89,20 @@ func (jobSrv *JobService) GetJobApplicationStatuses(
 		return []generated.JobApplicationStatuse{}, errors.New("failed to get statuses")
 	}
 	return statuses, nil
+}
+
+func (s *JobService) GetJobStatusHistory(
+	ctx context.Context,
+	userId pgtype.UUID, jobId pgtype.UUID,
+) ([]generated.JobStatusHistory, error) {
+	_, err := s.jobRepo.GetJobById(ctx, generated.GetJobByIDParams{UserID: userId, ID: jobId})
+	if err != nil {
+		return nil, err
+	}
+
+	statusHistory, err := s.jobRepo.GetStatusHistory(ctx, jobId)
+	if err != nil {
+		return nil, errors.New("something went wrong while fetching")
+	}
+	return statusHistory, nil
 }

@@ -3,6 +3,7 @@ package respositories
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/database"
 )
@@ -56,4 +57,13 @@ func (jbRepo *JobRespository) GetJobApplicationStatuses(
 	ctx context.Context,
 ) ([]generated.JobApplicationStatuse, error) {
 	return jbRepo.q.GetJobApplicationStatuses(ctx)
+}
+
+func (r *JobRespository) GetStatusHistory(
+	ctx context.Context,
+	jobId pgtype.UUID,
+) ([]generated.JobStatusHistory, error) {
+
+	return r.q.GetHistoryForJob(ctx, jobId)
+
 }
