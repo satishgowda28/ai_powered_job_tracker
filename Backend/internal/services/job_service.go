@@ -6,14 +6,14 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
-	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/repositories"
 )
 
 type JobService struct {
-	jobRepo *respositories.JobRespository
+	jobRepo *repositories.JobRespository
 }
 
-func NewJobSerive(jobRepos *respositories.JobRespository) *JobService {
+func NewJobSerive(jobRepos *repositories.JobRespository) *JobService {
 	return &JobService{
 		jobRepo: jobRepos,
 	}

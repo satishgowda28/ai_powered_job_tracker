@@ -2,15 +2,15 @@ package container
 
 import (
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/handlers"
-	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/repositories"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
 )
 
 type Container struct {
 	/* Respository */
-	UserRepository          *respositories.UserRepository
-	RefreshTokenRespository *respositories.RefreshTokenRepository
-	JobRepository           *respositories.JobRespository
+	UserRepository          *repositories.UserRepository
+	RefreshTokenRespository *repositories.RefreshTokenRepository
+	JobRepository           *repositories.JobRespository
 
 	/* Service */
 	AuthService *services.AuthService
@@ -26,9 +26,9 @@ type Container struct {
 func NewContainer() *Container {
 	c := &Container{}
 	/* Respository */
-	c.UserRepository = respositories.NewUserRepository()
-	c.RefreshTokenRespository = respositories.NewRefreshTokenRepository()
-	c.JobRepository = respositories.NewJobrepository()
+	c.UserRepository = repositories.NewUserRepository()
+	c.RefreshTokenRespository = repositories.NewRefreshTokenRepository()
+	c.JobRepository = repositories.NewJobrepository()
 
 	/* Services */
 	c.AuthService = services.NewAuthService(c.UserRepository, c.RefreshTokenRespository)

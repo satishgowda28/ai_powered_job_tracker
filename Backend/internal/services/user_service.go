@@ -7,14 +7,14 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
-	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/repositories"
 )
 
 type UserService struct {
-	userRepo *respositories.UserRepository
+	userRepo *repositories.UserRepository
 }
 
-func NewUserService(userResp *respositories.UserRepository) *UserService {
+func NewUserService(userResp *repositories.UserRepository) *UserService {
 	return &UserService{
 		userRepo: userResp,
 	}

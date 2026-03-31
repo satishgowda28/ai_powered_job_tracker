@@ -11,17 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/auth"
-	"github.com/satishgowda28/ai_powered_job_tracker/internal/respositories"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/repositories"
 )
 
 type AuthService struct {
-	userRepo *respositories.UserRepository
-	rtknRepo *respositories.RefreshTokenRepository
+	userRepo *repositories.UserRepository
+	rtknRepo *repositories.RefreshTokenRepository
 }
 
 func NewAuthService(
-	repo *respositories.UserRepository,
-	rtknRepo *respositories.RefreshTokenRepository,
+	repo *repositories.UserRepository,
+	rtknRepo *repositories.RefreshTokenRepository,
 ) *AuthService {
 	return &AuthService{
 		userRepo: repo,
