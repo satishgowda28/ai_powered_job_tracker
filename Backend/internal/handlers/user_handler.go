@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/middleware"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/utils"
 )
@@ -15,6 +16,11 @@ func NewUserHandler(uService *services.UserService) *UserHandler {
 	return &UserHandler{
 		usrService: uService,
 	}
+}
+
+func (h *UserHandler) RegisterRoutes(router fiber.Router) {
+	protected := router.Group("/user")
+	protected.Get("/me", middleware.JWTMiddleware(), h.Me)
 }
 
 func (usrHandler *UserHandler) Me(c *fiber.Ctx) error {

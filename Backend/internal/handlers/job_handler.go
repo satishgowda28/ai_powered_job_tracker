@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/satishgowda28/ai_powered_job_tracker/db/generated"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/middleware"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/utils"
 )
@@ -19,6 +20,14 @@ func NewJobHandler(jobService *services.JobService) *JobHandler {
 	return &JobHandler{
 		jobService: jobService,
 	}
+}
+
+func (h *JobHandler) RegisterRoutes(router fiber.Router) {
+	jobRouter := router.Group("/job", middleware.JWTMiddleware())
+	jobRouter.Post("/", h.CreateJob)
+	jobRouter.Get("/", h.GetJobs)
+	jobRouter.Get("/:id", h.GetJob)
+	jobRouter.Put("/:id", h.UpdateJobStatus)
 }
 
 func (h *JobHandler) CreateJob(c *fiber.Ctx) error {

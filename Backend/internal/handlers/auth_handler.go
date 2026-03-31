@@ -40,6 +40,13 @@ func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 	}
 }
 
+func (h *AuthHandler) RegisterRoutes(router fiber.Router) {
+	authRoute := router.Group("/auth")
+	authRoute.Post("/register", h.Register)
+	authRoute.Post("/auth/login", h.Login)
+	authRoute.Post("/auth/refresh", h.Refresh)
+}
+
 func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
 	var newCreds struct {
 		BaseAuthParam

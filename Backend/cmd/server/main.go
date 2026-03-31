@@ -27,10 +27,11 @@ func main() {
 
 	container := container.NewContainer()
 
-	routes.Register(app)
-	routes.RegisterAuthRoutes(app, container.AuthHandler)
-	routes.RegisterUserRoutes(app, container.UserHandler)
-	routes.RegisterJobRoutes(app, container.JobHandler)
+	// routes.Register(app)
+	routes.SetupRoutes(app, container)
+	// routes.RegisterAuthRoutes(app, container.AuthHandler)
+	// routes.RegisterUserRoutes(app, container.UserHandler)
+	// routes.RegisterJobRoutes(app, container.JobHandler)
 
 	addr := ":" + cfg.Port
 	log.Println("Starting server on", addr)
