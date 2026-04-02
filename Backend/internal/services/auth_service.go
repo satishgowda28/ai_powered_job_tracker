@@ -107,7 +107,8 @@ func (authSer *AuthService) Refresh(ctx context.Context, token string) (string, 
 		return "", errors.New("Refresh token revoked")
 	}
 
-	if time.Now().After(dbToken.ExpiresAt.Time) {
+	now := time.Now().UTC()
+	if now.After(dbToken.ExpiresAt.Time) {
 		return "", errors.New("refresh token expired")
 	}
 	accessToken, err := auth.GenerateAccessToken(dbToken.UserID)
@@ -116,4 +117,25 @@ func (authSer *AuthService) Refresh(ctx context.Context, token string) (string, 
 	}
 
 	return accessToken, nil
+}
+
+func (s *AuthService) HandleLogout(ctx context.Context, token string) error {
+	dbToken, err := s.rtknRepo.Get(ctx, token)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil
+		}
+		return err
+	}
+	if dbToken.RevokedAt.Valid {
+		return nil
+	}
+	now := time.Now().UTC()
+	if now.After(dbToken.ExpiresAt.Time) {
+		return nil
+	}
+	if _, err = s.rtknRepo.RevokeRefreshToken(ctx, token); err != nil {
+		return err
+	}
+	return nil
 }

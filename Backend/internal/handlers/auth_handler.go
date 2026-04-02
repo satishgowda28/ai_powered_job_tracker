@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/auth"
 	"github.com/satishgowda28/ai_powered_job_tracker/internal/services"
+	"github.com/satishgowda28/ai_powered_job_tracker/internal/utils"
 )
 
 type BaseAuthParam struct {
@@ -45,6 +46,7 @@ func (h *AuthHandler) RegisterRoutes(router fiber.Router) {
 	authRoute.Post("/register", h.Register)
 	authRoute.Post("/auth/login", h.Login)
 	authRoute.Post("/auth/refresh", h.Refresh)
+	authRoute.Post("/logout", h.Logout)
 }
 
 func (authHandler *AuthHandler) Register(c *fiber.Ctx) error {
@@ -194,4 +196,23 @@ func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"access_token": accessToken})
 
+}
+
+func (h *AuthHandler) Logout(c *fiber.Ctx) error {
+	var body struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	if err := c.BodyParser(body); err != nil {
+		return utils.BadRequest(c, "invalid request body")
+	}
+	if body.RefreshToken == "" {
+		return utils.Unauthorized(c, "refresh token is required")
+	}
+	if err := h.authService.HandleLogout(c.Context(), body.RefreshToken); err != nil {
+		return utils.BadRequest(c, "Something went wrong")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "logged out successfully",
+	})
 }
