@@ -13,6 +13,19 @@ type JobService struct {
 	jobRepo *repositories.JobRespository
 }
 
+type JobsListResponse struct {
+	Jobs  []generated.Job
+	Count int64
+	Page  int32
+	Limit int32
+}
+
+type GetJobsInput struct {
+	UserID pgtype.UUID
+	Page   int32
+	Limit  int32
+}
+
 func NewJobSerive(jobRepos *repositories.JobRespository) *JobService {
 	return &JobService{
 		jobRepo: jobRepos,
@@ -38,9 +51,32 @@ func (jobSrv *JobService) CreateJob(
 
 func (jobSrv *JobService) GetJobs(
 	ctx context.Context,
-	arg generated.GetJobsParams,
-) ([]generated.Job, error) {
-	return jobSrv.jobRepo.GetJobsByUser(ctx, arg)
+	arg GetJobsInput,
+) (JobsListResponse, error) {
+	const MaxLimit = 50
+	if arg.Page < 1 {
+		arg.Page = 1
+	}
+	if arg.Limit <= 0 {
+		arg.Limit = 10 // default
+	}
+	if arg.Limit > MaxLimit {
+		arg.Limit = MaxLimit
+	}
+	jobsList, err := jobSrv.jobRepo.GetJobsByUser(ctx, generated.GetJobsParams{
+		UserID: arg.UserID,
+		Limit:  arg.Limit,
+		Offset: (arg.Page - 1) * arg.Limit,
+	})
+	if err != nil {
+		return JobsListResponse{}, err
+	}
+	totalCount, err := jobSrv.jobRepo.GetJobsCount(ctx, arg.UserID)
+	if err != nil {
+		return JobsListResponse{}, err
+	}
+
+	return JobsListResponse{Jobs: jobsList, Count: totalCount, Page: arg.Page, Limit: arg.Limit}, nil
 }
 
 func (jobSrv *JobService) GetJob(

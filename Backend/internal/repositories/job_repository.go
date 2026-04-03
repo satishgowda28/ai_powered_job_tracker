@@ -31,6 +31,12 @@ func (jbRepo *JobRespository) GetJobsByUser(
 ) ([]generated.Job, error) {
 	return jbRepo.q.GetJobs(ctx, arg)
 }
+func (jbRepo *JobRespository) GetJobsCount(
+	ctx context.Context,
+	userId pgtype.UUID,
+) (int64, error) {
+	return jbRepo.q.GetJobsCount(ctx, userId)
+}
 
 func (jbRepo *JobRespository) GetJobById(
 	ctx context.Context,

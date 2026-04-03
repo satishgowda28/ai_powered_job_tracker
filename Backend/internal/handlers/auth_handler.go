@@ -202,7 +202,7 @@ func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 	var body struct {
 		RefreshToken string `json:"refresh_token"`
 	}
-	if err := c.BodyParser(body); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return utils.BadRequest(c, "invalid request body")
 	}
 	if body.RefreshToken == "" {

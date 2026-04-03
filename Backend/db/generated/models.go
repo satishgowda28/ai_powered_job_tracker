@@ -9,49 +9,49 @@ import (
 )
 
 type Job struct {
-	ID             pgtype.UUID
-	UserID         pgtype.UUID
-	Company        string
-	Title          string
-	JobDescription string
-	JobLocation    string
-	Salary         pgtype.Int4
-	JobUrl         string
-	Status         string
-	Notes          string
-	AppliedAt      pgtype.Timestamp
-	UpdatedAt      pgtype.Timestamp
+	ID             pgtype.UUID      `json:"id"`
+	UserID         pgtype.UUID      `json:"user_id"`
+	Company        string           `json:"company"`
+	Title          string           `json:"title"`
+	JobDescription string           `json:"job_description"`
+	JobLocation    string           `json:"job_location"`
+	Salary         pgtype.Int4      `json:"salary"`
+	JobUrl         string           `json:"job_url"`
+	Status         string           `json:"status"`
+	Notes          string           `json:"notes"`
+	AppliedAt      pgtype.Timestamp `json:"applied_at"`
+	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
 }
 
 type JobApplicationStatuse struct {
-	Slug        string
-	DisplayName string
-	ColorHex    string
-	Description string
+	Slug        string `json:"slug"`
+	DisplayName string `json:"display_name"`
+	ColorHex    string `json:"color_hex"`
+	Description string `json:"description"`
 }
 
 type JobStatusHistory struct {
-	ID        pgtype.UUID
-	JobID     pgtype.UUID
-	OldStatus string
-	NewStatus string
-	ChangedAt pgtype.Timestamp
+	ID        pgtype.UUID      `json:"id"`
+	JobID     pgtype.UUID      `json:"job_id"`
+	OldStatus string           `json:"old_status"`
+	NewStatus string           `json:"new_status"`
+	ChangedAt pgtype.Timestamp `json:"changed_at"`
 }
 
 type User struct {
-	ID           pgtype.UUID
-	Name         string
-	Email        string
-	PasswordHash string
-	CreatedAt    pgtype.Timestamp
-	UpdatedAt    pgtype.Timestamp
+	ID           pgtype.UUID      `json:"id"`
+	Name         string           `json:"name"`
+	Email        string           `json:"email"`
+	PasswordHash string           `json:"password_hash"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
 }
 
 type UserRefreshToken struct {
-	Token     string
-	UserID    pgtype.UUID
-	ExpiresAt pgtype.Timestamp
-	RevokedAt pgtype.Timestamp
-	CreatedAt pgtype.Timestamp
-	UpdatedAt pgtype.Timestamp
+	Token     string           `json:"token"`
+	UserID    pgtype.UUID      `json:"user_id"`
+	ExpiresAt pgtype.Timestamp `json:"expires_at"`
+	RevokedAt pgtype.Timestamp `json:"revoked_at"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
 }

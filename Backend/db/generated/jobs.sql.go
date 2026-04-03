@@ -18,15 +18,15 @@ RETURNING id, user_id, company, title, job_description, job_location, salary, jo
 `
 
 type CreateJobParams struct {
-	UserID         pgtype.UUID
-	Company        string
-	Title          string
-	JobDescription string
-	JobLocation    string
-	Salary         pgtype.Int4
-	JobUrl         string
-	Status         string
-	Notes          string
+	UserID         pgtype.UUID `json:"user_id"`
+	Company        string      `json:"company"`
+	Title          string      `json:"title"`
+	JobDescription string      `json:"job_description"`
+	JobLocation    string      `json:"job_location"`
+	Salary         pgtype.Int4 `json:"salary"`
+	JobUrl         string      `json:"job_url"`
+	Status         string      `json:"status"`
+	Notes          string      `json:"notes"`
 }
 
 func (q *Queries) CreateJob(ctx context.Context, arg CreateJobParams) (Job, error) {
@@ -65,8 +65,8 @@ WHERE id = $1 AND user_id = $2
 `
 
 type GetJobByIDParams struct {
-	ID     pgtype.UUID
-	UserID pgtype.UUID
+	ID     pgtype.UUID `json:"id"`
+	UserID pgtype.UUID `json:"user_id"`
 }
 
 func (q *Queries) GetJobByID(ctx context.Context, arg GetJobByIDParams) (Job, error) {
@@ -97,9 +97,9 @@ LIMIT $2 OFFSET $3
 `
 
 type GetJobsParams struct {
-	UserID pgtype.UUID
-	Limit  int32
-	Offset int32
+	UserID pgtype.UUID `json:"user_id"`
+	Limit  int32       `json:"limit"`
+	Offset int32       `json:"offset"`
 }
 
 func (q *Queries) GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error) {
@@ -135,6 +135,18 @@ func (q *Queries) GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error)
 	return items, nil
 }
 
+const getJobsCount = `-- name: GetJobsCount :one
+SELECT COUNT(*) FROM jobs
+WHERE user_id = $1
+`
+
+func (q *Queries) GetJobsCount(ctx context.Context, userID pgtype.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, getJobsCount, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const updateJobStatus = `-- name: UpdateJobStatus :one
 UPDATE jobs SET Status = $2, update_at = NOW()
 WHERE id = $1 AND user_id = $3
@@ -142,9 +154,9 @@ RETURNING id, user_id, company, title, job_description, job_location, salary, jo
 `
 
 type UpdateJobStatusParams struct {
-	ID     pgtype.UUID
-	Status string
-	UserID pgtype.UUID
+	ID     pgtype.UUID `json:"id"`
+	Status string      `json:"status"`
+	UserID pgtype.UUID `json:"user_id"`
 }
 
 func (q *Queries) UpdateJobStatus(ctx context.Context, arg UpdateJobStatusParams) (Job, error) {

@@ -18,6 +18,7 @@ type Querier interface {
 	GetJobApplicationStatuses(ctx context.Context) ([]JobApplicationStatuse, error)
 	GetJobByID(ctx context.Context, arg GetJobByIDParams) (Job, error)
 	GetJobs(ctx context.Context, arg GetJobsParams) ([]Job, error)
+	GetJobsCount(ctx context.Context, userID pgtype.UUID) (int64, error)
 	GetRefreshToken(ctx context.Context, token string) (UserRefreshToken, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)

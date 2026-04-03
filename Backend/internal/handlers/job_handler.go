@@ -50,7 +50,7 @@ func (h *JobHandler) CreateJob(c *fiber.Ctx) error {
 		Status         string `json:"status"`
 		Notes          string `json:"notes"`
 	}
-	if err := c.BodyParser(body); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   "bad-request",
 			"message": "invalid request body",
@@ -78,6 +78,7 @@ func (h *JobHandler) CreateJob(c *fiber.Ctx) error {
 }
 
 func (h *JobHandler) GetJobs(c *fiber.Ctx) error {
+
 	userId, err := utils.GetUserId(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -85,9 +86,21 @@ func (h *JobHandler) GetJobs(c *fiber.Ctx) error {
 			"message": "user id missing from context",
 		})
 	}
+	var filter struct {
+		Page  int32 `query:"page"`
+		Limit int32 `query:"limit"`
+	}
+	if err := c.QueryParser(&filter); err != nil {
+		return utils.BadRequest(c, "Query params are not proper")
+	}
+
 	jobs, err := h.jobService.GetJobs(
 		c.Context(),
-		generated.GetJobsParams{UserID: utils.ToPgtypeUUID(userId)},
+		services.GetJobsInput{
+			UserID: utils.ToPgtypeUUID(userId),
+			Limit:  filter.Limit,
+			Page:   filter.Page,
+		},
 	)
 
 	if err != nil {
@@ -98,7 +111,11 @@ func (h *JobHandler) GetJobs(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": jobs})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": jobs.Jobs, "meta": fiber.Map{
+		"total": jobs.Count,
+		"page":  jobs.Page,
+		"limit": jobs.Limit,
+	}})
 }
 
 func (h *JobHandler) GetJob(c *fiber.Ctx) error {
@@ -154,7 +171,7 @@ func (h *JobHandler) UpdateJobStatus(c *fiber.Ctx) error {
 	var body struct {
 		Status string `json:"status"`
 	}
-	if err := c.BodyParser(body); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error":   "bad-request",
 			"message": "invalid request body",

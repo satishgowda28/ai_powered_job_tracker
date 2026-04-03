@@ -18,9 +18,9 @@ RETURNING token, user_id, expires_at, revoked_at, created_at, updated_at
 `
 
 type CreateRefreshTokenParams struct {
-	Token     string
-	UserID    pgtype.UUID
-	ExpiresAt pgtype.Timestamp
+	Token     string           `json:"token"`
+	UserID    pgtype.UUID      `json:"user_id"`
+	ExpiresAt pgtype.Timestamp `json:"expires_at"`
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (UserRefreshToken, error) {

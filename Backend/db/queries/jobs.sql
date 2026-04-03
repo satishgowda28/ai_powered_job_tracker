@@ -9,6 +9,10 @@ WHERE user_id = $1
 ORDER BY applied_at DESC
 LIMIT $2 OFFSET $3;
 
+-- name: GetJobsCount :one
+SELECT COUNT(*) FROM jobs
+WHERE user_id = $1;
+
 -- name: GetJobByID :one
 SELECT * FROM jobs
 WHERE id = $1 AND user_id = $2;
